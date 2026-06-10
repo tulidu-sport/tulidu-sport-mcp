@@ -1,10 +1,10 @@
 {
-  "name": "@tulidu/mcp",
-  "version": "0.1.0",
+  "name": "tulidu-sport-mcp",
+  "version": "0.1.4",
   "description": "MCP server for Tulidu Sport — connect AI tools to your tournaments",
   "type": "module",
   "bin": {
-    "tulidu-mcp": "./dist/index.js"
+    "tulidu-sport-mcp": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
@@ -13,8 +13,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "start": "node dist/index.js",
-    "prepare": "npm run build"
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",

@@ -90,7 +90,7 @@ export async function login(): Promise<void> {
   const port = await getFreePort();
   const redirectUri = `http://localhost:${port}/callback`;
 
-  const authUrl = new URL('https://app.tulidu.com/mcp-auth');
+  const authUrl = new URL('https://tulidu.com/mcp-auth');
   authUrl.searchParams.set('redirect_uri', redirectUri);
   authUrl.searchParams.set('state', state);
   authUrl.searchParams.set('code_challenge', codeChallenge);
