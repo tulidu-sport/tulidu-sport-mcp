@@ -2,7 +2,7 @@
 
 Connect Claude, Codex, and other MCP clients to [Tulidu Sport](https://tulidu.com) so your AI assistant can explore World Cup games, tournament fixtures, team form, head-to-head records, live match stats, leaderboards, vCoin profile data, and your score predictions.
 
-Use it to ask questions like "what World Cup games are coming up?", "which predictions am I missing?", "show my tournament leaderboard", or "give me team stats before I predict this match."
+Use it to ask questions like "what World Cup games are coming up?", "is there a live game right now?", "show the live events and stats for this match", "which predictions am I missing?", "show my tournament leaderboard", or "give me team stats before I predict this match."
 
 ## Requirements
 
