@@ -1,6 +1,8 @@
-# tulidu-sport-mcp
+# Tulidu Sport MCP: World Cup, Team Stats, and Tournament Predictions for AI
 
-MCP server for [Tulidu Sport](https://tulidu.com) - lets AI tools query your tournaments, leaderboards, predictions, match fixtures, live stats, and profile.
+Connect Claude, Codex, and other MCP clients to [Tulidu Sport](https://tulidu.com) so your AI assistant can explore World Cup games, tournament fixtures, team form, head-to-head records, live match stats, leaderboards, vCoin profile data, and your score predictions.
+
+Use it to ask questions like "what World Cup games are coming up?", "which predictions am I missing?", "show my tournament leaderboard", or "give me team stats before I predict this match."
 
 ## Requirements
 
