@@ -133,11 +133,25 @@ TULIDU_API_URL = "http://127.0.0.1:3001"
 | `get_leaderboard` | Get tournament rankings |
 | `get_my_predictions` | Get your submitted predictions for a tournament |
 | `get_my_profile` | Get your profile and vCoin balance |
-| `get_match_stats` | Get live or final match stats |
-| `get_match_events` | Get goals, cards, substitutions, and match events |
-| `get_head_to_head` | Get historical head-to-head record for a match |
+| `get_match_events` | Game tab: goals, cards, substitutions, penalties, and match timeline events |
+| `get_match_stats` | Game tab: live or final match stats such as possession, shots, corners, fouls, saves, and pass accuracy |
+| `get_match_lineup` | Game tab: formations, coaches, starting XI, and substitutes |
+| `get_league_standings` | Game tab: league standings table for the fixture league |
+| `get_head_to_head` | Game tab: historical head-to-head record for the two teams |
 | `get_team_stats` | Get season stats and recent form for a team |
 | `make_prediction` | Submit or update a score prediction |
+
+## Game Detail Tabs
+
+Tulidu game pages have five useful tabs. The MCP exposes each one directly:
+
+- Events: use `get_match_events` for live or finished match timelines. Scheduled games may return no events yet.
+- Stats: use `get_match_stats` for live or final match statistics. Scheduled games may not have stats until kickoff.
+- Lineup: use `get_match_lineup` for formations, coaches, starting XI, and substitutes. Lineups are usually available close to kickoff, live, or after kickoff.
+- Standings: use `get_league_standings` with the fixture `leagueId` from `get_tournament_games`.
+- History: use `get_head_to_head` before predictions or whenever the user asks about previous meetings between the teams.
+
+The MCP also includes prompt templates such as `inspect_game_tabs` and `prepare_match_prediction_context` for clients that surface MCP prompts.
 
 ## Write Tool Safety
 

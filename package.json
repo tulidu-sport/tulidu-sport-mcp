@@ -1,6 +1,6 @@
 {
   "name": "tulidu-sport-mcp",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "MCP server for Tulidu Sport — connect AI tools to your tournaments",
   "type": "module",
   "bin": {

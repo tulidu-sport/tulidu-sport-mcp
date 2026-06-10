@@ -13,7 +13,9 @@ import {
   getMyTournaments,
   getMatchStats,
   getMatchEvents,
+  getMatchLineup,
   getHeadToHead,
+  getLeagueStandings,
   getTeamStats,
   makePrediction,
   NotLoggedInError,
@@ -85,21 +87,95 @@ server.tool('get_my_predictions', 'Get the logged-in user\'s predictions for a t
 // Profile
 server.tool('get_my_profile', 'Get the logged-in user\'s profile including vCoin balance.', {}, wrapTool(getMyProfile));
 
-// Game stats
-server.tool('get_match_stats', 'Get live or final stats for a match (shots, possession, etc.).', { game_id: z.string() }, ({ game_id }) =>
-  wrapTool(() => getMatchStats(game_id))(),
-);
-
-server.tool('get_match_events', 'Get events for a match (goals, cards, substitutions).', { game_id: z.string() }, ({ game_id }) =>
+// Game detail tabs
+server.tool('get_match_events', 'Game tab: events. Get match timeline events such as goals, cards, substitutions, penalties, players, assists, and elapsed minute. Best for live or finished games; scheduled games may return an empty list.', { game_id: z.string() }, ({ game_id }) =>
   wrapTool(() => getMatchEvents(game_id))(),
 );
 
-server.tool('get_head_to_head', 'Get historical head-to-head record for the two teams in a match.', { game_id: z.string() }, ({ game_id }) =>
+server.tool('get_match_stats', 'Game tab: stats. Get live or final match stats such as possession, shots, corners, fouls, offsides, yellow cards, saves, pass accuracy, and elapsed minute. Use for live or finished games; scheduled games may have no stats yet.', { game_id: z.string() }, ({ game_id }) =>
+  wrapTool(() => getMatchStats(game_id))(),
+);
+
+server.tool('get_match_lineup', 'Game tab: lineup. Get confirmed lineups, formations, coaches, starting XI, and substitutes for both teams. Use close to kickoff, live, or after kickoff; scheduled games may return no lineup yet.', { game_id: z.string() }, ({ game_id }) =>
+  wrapTool(() => getMatchLineup(game_id))(),
+);
+
+server.tool('get_league_standings', 'Game tab: standings. Get standings table for a league, including rank, points, played, wins, draws, losses, goals, and form. Use the leagueId from a fixture returned by get_tournament_games or live game lists.', { league_id: z.string() }, ({ league_id }) =>
+  wrapTool(() => getLeagueStandings(league_id))(),
+);
+
+server.tool('get_head_to_head', 'Game tab: history. Get historical head-to-head record for the two teams in a match. Use before predictions or when the user asks about past meetings/history between teams.', { game_id: z.string() }, ({ game_id }) =>
   wrapTool(() => getHeadToHead(game_id))(),
 );
 
 server.tool('get_team_stats', 'Get season stats and recent form for a team.', { team_id: z.string() }, ({ team_id }) =>
   wrapTool(() => getTeamStats(team_id))(),
+);
+
+server.registerPrompt(
+  'inspect_game_tabs',
+  {
+    title: 'Inspect Tulidu game tabs',
+    description: 'Use the right Tulidu MCP tools for a game detail page: events, stats, lineup, standings, and history.',
+    argsSchema: {
+      game_id: z.string().describe('Game document ID from get_tournament_games, for example a tournament fixture id or game doc id.'),
+      league_id: z.string().optional().describe('League ID from the fixture. Required for standings.'),
+    },
+  },
+  ({ game_id, league_id }) => ({
+    messages: [
+      {
+        role: 'user',
+        content: {
+          type: 'text',
+          text: [
+            `Inspect Tulidu game ${game_id}.`,
+            'Use these game-tab tools when relevant:',
+            '- Events: call get_match_events for goals, cards, substitutions, penalties, players, assists, and elapsed minutes. Best for live/finished games; scheduled games may be empty.',
+            '- Stats: call get_match_stats for possession, shots, corners, fouls, offsides, cards, saves, pass accuracy, and elapsed minute. Best for live/finished games; scheduled games may not have stats yet.',
+            '- Lineup: call get_match_lineup for formations, coaches, starting XI, and substitutes. Usually available close to kickoff, live, or after kickoff.',
+            league_id
+              ? `- Standings: call get_league_standings with league_id ${league_id} for the league table.`
+              : '- Standings: first get the fixture leagueId, then call get_league_standings for the league table.',
+            '- History: call get_head_to_head for previous meetings between the teams.',
+            'If a tab has no data yet, say it is not available yet and explain when it is normally available.',
+          ].join('\n'),
+        },
+      },
+    ],
+  }),
+);
+
+server.registerPrompt(
+  'prepare_match_prediction_context',
+  {
+    title: 'Prepare Tulidu match prediction context',
+    description: 'Collect the useful game tabs before helping a user decide a score prediction.',
+    argsSchema: {
+      game_id: z.string().describe('Game document ID from get_tournament_games.'),
+      league_id: z.string().optional().describe('League ID from the fixture, used for standings.'),
+    },
+  },
+  ({ game_id, league_id }) => ({
+    messages: [
+      {
+        role: 'user',
+        content: {
+          type: 'text',
+          text: [
+            `Prepare prediction context for Tulidu game ${game_id}.`,
+            'Before suggesting a prediction, gather available context:',
+            '1. get_head_to_head for history between the two teams.',
+            '2. get_match_lineup if kickoff is near, live, or already started.',
+            '3. get_match_stats and get_match_events if the game is live or finished.',
+            league_id ? `4. get_league_standings with league_id ${league_id}.` : '4. get_league_standings after finding the fixture leagueId.',
+            '5. get_team_stats for each team when team IDs are available and accepted by the API.',
+            'Do not call make_prediction unless the user explicitly confirms the exact score.',
+          ].join('\n'),
+        },
+      },
+    ],
+  }),
 );
 
 // Predictions (write)

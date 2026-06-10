@@ -63,11 +63,19 @@ export async function getMatchStats(gameId: string) {
 }
 
 export async function getMatchEvents(gameId: string) {
-  return apiFetch(`/api/games/${encodeURIComponent(gameId)}`);
+  return apiFetch(`/api/games/${encodeURIComponent(gameId)}/events`);
+}
+
+export async function getMatchLineup(gameId: string) {
+  return apiFetch(`/api/games/${encodeURIComponent(gameId)}/lineup`);
 }
 
 export async function getHeadToHead(gameId: string) {
   return apiFetch(`/api/games/${encodeURIComponent(gameId)}/headtohead`);
+}
+
+export async function getLeagueStandings(leagueId: string) {
+  return apiFetch(`/api/leagues/${encodeURIComponent(leagueId)}/standings`);
 }
 
 export async function getTeamStats(teamId: string) {
